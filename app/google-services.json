@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "245063491904",
+    "firebase_url": "https://preservars-a3e79-default-rtdb.firebaseio.com",
+    "project_id": "preservars-a3e79",
+    "storage_bucket": "preservars-a3e79.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:245063491904:android:6a17d90b6a2aed34bb9aa5",
+        "android_client_info": {
+          "package_name": "com.alkateca.preservars"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRJaL9QMcVGB4ywWeLi0rGFau9NAYiGVU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

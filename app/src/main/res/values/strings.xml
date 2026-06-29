@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">PreservaRS</string>
+    <string name="loginEmail">E-mail</string>
+    <string name="loginSenha">Senha</string>
+    <string name="loginBtnLogin">Login</string>
+    <string name="loginBtnCadastro">Cadastre-se</string>
+    <string name="cadastrBtnCadastro">Cadastrar usuário</string>
+</resources>

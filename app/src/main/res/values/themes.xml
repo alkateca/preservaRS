@@ -1,8 +1,17 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.PreservaRS" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Base.Theme.PreservaRS" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/nature_green</item>
+        <item name="colorPrimaryVariant">@color/nature_green_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <item name="colorSecondary">@color/nature_earth</item>
+        <item name="colorSecondaryVariant">@color/nature_earth</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+
+
+        <item name="android:windowBackground">@color/background_color</item>
     </style>
 
     <style name="Theme.PreservaRS" parent="Base.Theme.PreservaRS" />

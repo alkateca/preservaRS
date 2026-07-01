@@ -33,6 +33,8 @@ public class PostagemAdapter extends RecyclerView.Adapter<PostagemAdapter.Postag
     public interface OnPostagemClickListener {
         void onEditClick(Postagem postagem);
         void onDeleteClick(Postagem postagem);
+        // ADICIONADO: Contrato para o clique de e-mail
+        void onEmailClick(Postagem postagem);
     }
 
     public PostagemAdapter(List<Postagem> listaOriginal, OnPostagemClickListener listener) {
@@ -86,6 +88,8 @@ public class PostagemAdapter extends RecyclerView.Adapter<PostagemAdapter.Postag
         // Configurando as ações dos botões
         holder.btnEditar.setOnClickListener(v -> listener.onEditClick(postagem));
         holder.btnExcluir.setOnClickListener(v -> listener.onDeleteClick(postagem));
+        // ADICIONADO: Ação para o botão de e-mail
+        holder.btnEmail.setOnClickListener(v -> listener.onEmailClick(postagem));
     }
 
     @Override
@@ -128,7 +132,8 @@ public class PostagemAdapter extends RecyclerView.Adapter<PostagemAdapter.Postag
     static class PostagemViewHolder extends RecyclerView.ViewHolder {
         TextView txtTituloPostagem, txtDescricaoPostagem;
         ImageView imgPostagem;
-        ImageButton btnEditar, btnExcluir; // Alterado de Button para ImageButton
+        // ADICIONADO: btnEmail
+        ImageButton btnEditar, btnExcluir, btnEmail;
 
         public PostagemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -138,6 +143,8 @@ public class PostagemAdapter extends RecyclerView.Adapter<PostagemAdapter.Postag
             imgPostagem = itemView.findViewById(R.id.imgPostagem);
             btnEditar = itemView.findViewById(R.id.btnEditar);
             btnExcluir = itemView.findViewById(R.id.btnExcluir);
+            // ADICIONADO: Instanciando o botão de e-mail
+            btnEmail = itemView.findViewById(R.id.btnEmail);
         }
     }
 }

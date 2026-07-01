@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:padding="@dimen/margin_default"
     tools:context=".NewPostActivity">
 
     <EditText
@@ -14,11 +14,11 @@
         android:layout_height="wrap_content"
         android:hint="@string/newPostTitulo"
         android:inputType="text"
-        android:minHeight="48dp"
+        android:minHeight="@dimen/min_touch_target"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="@dimen/margin_default"/>
 
     <EditText
         android:id="@+id/txtDescricao"
@@ -28,23 +28,23 @@
         android:inputType="textMultiLine"
         android:lines="4"
         android:gravity="top|start"
-        android:minHeight="48dp"
+        android:minHeight="@dimen/min_touch_target"
         app:layout_constraintTop_toBottomOf="@id/txtTitulo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="@dimen/margin_default"/>
 
     <ImageView
         android:id="@+id/imgPreview"
         android:layout_width="0dp"
-        android:layout_height="250dp"
-        android:background="#E0E0E0"
+        android:layout_height="@dimen/preview_image_height"
+        android:background="@color/bg_gray"
         android:scaleType="centerCrop"
         android:contentDescription="Preview da foto tirada"
         app:layout_constraintTop_toBottomOf="@id/txtDescricao"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp" />
+        android:layout_marginTop="@dimen/margin_large" />
 
     <Button
         android:id="@+id/btnTirarFoto"
@@ -54,17 +54,17 @@
         app:layout_constraintTop_toBottomOf="@id/imgPreview"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="@dimen/margin_default"/>
 
     <Button
         android:id="@+id/btnPublicar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/newPostBtnPostagem"
-        android:backgroundTint="#4CAF50"
+        android:backgroundTint="@color/nature_green"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="@dimen/margin_default"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

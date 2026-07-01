@@ -197,13 +197,11 @@ public class TimeLineActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public void onDeleteClick(Postagem postagem) {
-
         new AlertDialog.Builder(this)
                 .setTitle("Excluir Postagem")
                 .setMessage("Tem certeza que deseja excluir esta postagem permanentemente?")
                 .setPositiveButton("Sim, Excluir", (dialog, which) -> {
                     if (postagem.getId() != null) {
-
                         databaseReference.child(postagem.getId()).removeValue()
                                 .addOnSuccessListener(aVoid -> Snackbar.make(recyclerView, "Postagem excluída!", Snackbar.LENGTH_LONG).show())
                                 .addOnFailureListener(e -> Toast.makeText(TimeLineActivity.this, "Erro ao excluir.", Toast.LENGTH_SHORT).show());
@@ -211,5 +209,31 @@ public class TimeLineActivity extends AppCompatActivity implements NavigationVie
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
+    }
+
+    // --- CÓDIGO ADICIONADO: INTENT IMPLÍCITA DE E-MAIL --- //
+
+    // Método para disparar a Intent de e-mail (adicione 'void onEmailClick(Postagem postagem);' na interface do PostagemAdapter)
+    @Override
+    public void onEmailClick(Postagem postagem) {
+        enviarPostPorEmail(postagem);
+    }
+
+    private void enviarPostPorEmail(Postagem postagem) {
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        // Define o tipo para garantir que abra apps de e-mail
+        emailIntent.setType("message/rfc822");
+
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "PreservaRS: Veja esta planta - " + postagem.getTitulo());
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Confira os detalhes registrados no aplicativo:\n\n" +
+                "Título: " + postagem.getTitulo() + "\n" +
+                "Descrição: " + postagem.getDescricao() + "\n");
+
+        try {
+            // Abre o seletor de aplicativos para o usuário escolher o app de e-mail
+            startActivity(Intent.createChooser(emailIntent, "Enviar e-mail usando..."));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(this, "Nenhum cliente de e-mail instalado.", Toast.LENGTH_SHORT).show();
+        }
     }
 }

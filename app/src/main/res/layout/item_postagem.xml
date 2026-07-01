@@ -3,19 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    android:layout_margin="@dimen/margin_small"
+    app:cardCornerRadius="@dimen/card_corner_radius"
+    app:cardElevation="@dimen/card_elevation">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp">
+        android:padding="@dimen/margin_medium">
 
         <ImageView
             android:id="@+id/imgPostagem"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="@dimen/post_image_height"
             android:scaleType="centerCrop"
             app:layout_constraintTop_toTopOf="parent"
             android:contentDescription="Imagem da postagem" />
@@ -25,9 +25,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/itemPostagemTitulo"
-            android:textSize="18sp"
+            android:textSize="@dimen/text_size_title"
             android:textStyle="bold"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/margin_small"
             app:layout_constraintTop_toBottomOf="@id/imgPostagem"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -37,31 +37,43 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/itemPostagemDescricao"
-            android:textSize="14sp"
-            android:layout_marginTop="4dp"
+            android:textSize="@dimen/text_size_body"
+            android:layout_marginTop="@dimen/margin_tiny"
             app:layout_constraintTop_toBottomOf="@id/txtTituloPostagem"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <ImageButton
+            android:id="@+id/btnEmail"
+            android:layout_width="@dimen/min_touch_target"
+            android:layout_height="@dimen/min_touch_target"
+            android:src="@android:drawable/ic_dialog_email"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_small"
+            app:layout_constraintTop_toBottomOf="@id/txtDescricaoPostagem"
+            app:layout_constraintEnd_toStartOf="@id/btnEditar"
+            android:contentDescription="Enviar por Email" />
+
+        <ImageButton
             android:id="@+id/btnEditar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="@dimen/min_touch_target"
+            android:layout_height="@dimen/min_touch_target"
             android:src="@android:drawable/ic_menu_edit"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/margin_small"
             app:layout_constraintTop_toBottomOf="@id/txtDescricaoPostagem"
             app:layout_constraintEnd_toStartOf="@id/btnExcluir"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="@dimen/margin_small"
             android:contentDescription="Editar" />
 
         <ImageButton
             android:id="@+id/btnExcluir"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="@dimen/min_touch_target"
+            android:layout_height="@dimen/min_touch_target"
             android:src="@android:drawable/ic_menu_delete"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/margin_small"
             app:layout_constraintTop_toBottomOf="@id/txtDescricaoPostagem"
             app:layout_constraintEnd_toEndOf="parent"
             android:contentDescription="Excluir" />

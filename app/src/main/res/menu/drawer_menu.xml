@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_postagens"
+            android:icon="@android:drawable/ic_menu_agenda"
+            android:title="@string/menu_postagens" />
+        <item
+            android:id="@+id/nav_nova_postagem"
+            android:icon="@android:drawable/ic_menu_add"
+            android:title="@string/menu_nova_publicacao" />
+        <item
+            android:id="@+id/nav_sobre"
+            android:icon="@android:drawable/ic_menu_info_details"
+            android:title="@string/menu_sobre" />
+        <item
+            android:id="@+id/nav_deslogar"
+            android:icon="@android:drawable/ic_lock_power_off"
+            android:title="@string/menu_deslogar" />
+    </group>
+</menu>

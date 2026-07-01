@@ -2,7 +2,7 @@ package com.alkateca.preservars.models;
 
 public class Postagem {
 
-    private String idPost;
+    private String id;
     private String titulo;
     private String descricao;
     private String urlImagem;
@@ -11,8 +11,8 @@ public class Postagem {
 
     public Postagem(){}
 
-    public Postagem(String idPost, String titulo, String descricao, String urlImagem, String idUser, long timestamp) {
-        this.idPost = idPost;
+    public Postagem(String id, String titulo, String descricao, String urlImagem, String idUser, long timestamp) {
+        this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
         this.urlImagem = urlImagem;
@@ -20,12 +20,12 @@ public class Postagem {
         this.timestamp = timestamp;
     }
 
-    public String getIdPost() {
-        return idPost;
+    public String getId() {
+        return id;
     }
 
-    public void setIdPost(String idPost) {
-        this.idPost = idPost;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitulo() {

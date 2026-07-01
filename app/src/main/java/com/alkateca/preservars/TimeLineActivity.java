@@ -1,21 +1,27 @@
 package com.alkateca.preservars;
 
-import android.app.AlertDialog;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.alkateca.preservars.adapters.PostagemAdapter;
 import com.alkateca.preservars.models.Postagem;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -24,168 +30,186 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-public class TimeLineActivity extends AppCompatActivity {
+public class TimeLineActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PostagemAdapter.OnPostagemClickListener {
 
-    private LinearLayout containerPostagens;
-    private DatabaseReference databaseRef;
-    private String uidUsuarioLogado;
-    private View rootView;
-
-    private final ExecutorService executor = Executors.newFixedThreadPool(4);
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private DrawerLayout drawerLayout;
+    private RecyclerView recyclerView;
+    private PostagemAdapter adapter;
+    private List<Postagem> listaPostagens = new ArrayList<>();
+    private FirebaseAuth mAuth;
+    private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_time_line);
 
-        rootView = findViewById(android.R.id.content);
-        containerPostagens = findViewById(R.id.containerPostagens);
+        mAuth = FirebaseAuth.getInstance();
+        // Inicializa a referência do nó "postagens" no Firebase Realtime Database
+        databaseReference = FirebaseDatabase.getInstance().getReference("postagens");
 
-        uidUsuarioLogado = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        databaseRef = FirebaseDatabase.getInstance().getReference("postagens");
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        recuperarPostagens();
+        drawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.navigation_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, R.string.menu_sobre, R.string.menu_sobre);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        recyclerView = findViewById(R.id.recycler_view_posts);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new PostagemAdapter(listaPostagens, this);
+        recyclerView.setAdapter(adapter);
+
+        SearchView searchView = findViewById(R.id.search_view);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                adapter.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.getFilter().filter(newText);
+                return false;
+            }
+        });
+
+        carregarDadosDoFirebase();
     }
 
-    private void recuperarPostagens() {
-        databaseRef.addValueEventListener(new ValueEventListener() {
+    private void carregarDadosDoFirebase() {
+        // addValueEventListener escuta as mudanças no banco de dados em tempo real
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                // Limpa a tela antes de recarregar
-                containerPostagens.removeAllViews();
-
-                List<Postagem> listaTemporaria = new ArrayList<>();
-                for (DataSnapshot ds : snapshot.getChildren()) {
-                    Postagem postagem = ds.getValue(Postagem.class);
-                    if (postagem != null) listaTemporaria.add(postagem);
+                listaPostagens.clear(); // Limpa a lista antes de popular para não duplicar dados
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Postagem postagem = dataSnapshot.getValue(Postagem.class);
+                    if (postagem != null) {
+                        // Salva a Key do Firebase como ID do objeto para podermos editar/deletar depois
+                        postagem.setId(dataSnapshot.getKey());
+                        listaPostagens.add(postagem);
+                    }
                 }
-
-
-                Collections.sort(listaTemporaria, (p1, p2) -> Long.compare(p2.getTimestamp(), p1.getTimestamp()));
-
-
-                for (Postagem p : listaTemporaria) {
-                    desenharPostagemNaTela(p);
-                }
+                adapter.atualizarLista(listaPostagens);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Snackbar.make(rootView, "Erro ao carregar a timeline", Snackbar.LENGTH_SHORT).show();
+                Toast.makeText(TimeLineActivity.this, "Erro ao carregar dados do Firebase.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
 
-    private void desenharPostagemNaTela(Postagem postagem) {
-
-        View viewDaPostagem = LayoutInflater.from(this).inflate(R.layout.item_postagem, containerPostagens, false);
-
-        TextView titulo = viewDaPostagem.findViewById(R.id.txtTituloPostagem);
-        TextView descricao = viewDaPostagem.findViewById(R.id.txtDescricaoPostagem);
-        ImageView imagem = viewDaPostagem.findViewById(R.id.imgPostagem);
-        ImageButton btnEditar = viewDaPostagem.findViewById(R.id.btnEditar);
-        ImageButton btnExcluir = viewDaPostagem.findViewById(R.id.btnExcluir);
-
-        titulo.setText(postagem.getTitulo());
-        descricao.setText(postagem.getDescricao());
-
-
-        carregarImagemNativamente(postagem.getUrlImagem(), imagem);
-
-
-        if (postagem.getIdUser().equals(uidUsuarioLogado)) {
-            btnEditar.setVisibility(View.VISIBLE);
-            btnExcluir.setVisibility(View.VISIBLE);
-            btnEditar.setOnClickListener(v -> editarPostagem(postagem));
-            btnExcluir.setOnClickListener(v -> excluirPostagem(postagem));
-        } else {
-            btnEditar.setVisibility(View.GONE);
-            btnExcluir.setVisibility(View.GONE);
+        if (id == R.id.nav_postagens) {
+            // Já estamos na timeline
+        } else if (id == R.id.nav_nova_postagem) {
+            startActivity(new Intent(this, NewPostActivity.class));
+        } else if (id == R.id.nav_sobre) {
+            abrirDialogSobre();
+        } else if (id == R.id.nav_deslogar) {
+            mAuth.signOut();
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
         }
 
-
-        containerPostagens.addView(viewDaPostagem);
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
 
-    private void editarPostagem(Postagem postagem) {
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_about) {
+            abrirDialogSobre();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void abrirDialogSobre() {
+        SobreDialogFragment dialog = new SobreDialogFragment();
+        dialog.show(getSupportFragmentManager(), "SobreDialog");
+    }
+
+    @Override
+    public void onEditClick(Postagem postagem) {
+        // Cria um AlertDialog customizado com campos de texto para edição
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Editar Postagem");
 
-        View viewDialog = LayoutInflater.from(this).inflate(R.layout.activity_new_post, null);
-        viewDialog.findViewById(R.id.btnTirarFoto).setVisibility(View.GONE);
-        viewDialog.findViewById(R.id.imgPreview).setVisibility(View.GONE);
-        viewDialog.findViewById(R.id.btnPublicar).setVisibility(View.GONE);
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(50, 40, 50, 10);
 
-        EditText edtTitulo = viewDialog.findViewById(R.id.txtTitulo);
-        EditText edtDescricao = viewDialog.findViewById(R.id.txtDescricao);
+        final EditText editTitulo = new EditText(this);
+        editTitulo.setText(postagem.getTitulo());
+        editTitulo.setHint("Título");
+        layout.addView(editTitulo);
 
-        edtTitulo.setText(postagem.getTitulo());
-        edtDescricao.setText(postagem.getDescricao());
+        final EditText editDescricao = new EditText(this);
+        editDescricao.setText(postagem.getDescricao());
+        editDescricao.setHint("Descrição");
+        layout.addView(editDescricao);
 
-        builder.setView(viewDialog);
+        builder.setView(layout);
+
         builder.setPositiveButton("Salvar", (dialog, which) -> {
-            String novoTitulo = edtTitulo.getText().toString().trim();
-            String novaDescricao = edtDescricao.getText().toString().trim();
+            String novoTitulo = editTitulo.getText().toString().trim();
+            String novaDesc = editDescricao.getText().toString().trim();
 
-            if (!novoTitulo.isEmpty() && !novaDescricao.isEmpty()) {
+            if (!novoTitulo.isEmpty() && !novaDesc.isEmpty()) {
                 postagem.setTitulo(novoTitulo);
-                postagem.setDescricao(novaDescricao);
+                postagem.setDescricao(novaDesc);
 
-                databaseRef.child(postagem.getIdPost()).setValue(postagem)
-                        .addOnSuccessListener(aVoid -> Snackbar.make(rootView, "Atualizada!", Snackbar.LENGTH_SHORT).show());
+                // Atualiza o nó no Firebase
+                if (postagem.getId() != null) {
+                    databaseReference.child(postagem.getId()).setValue(postagem)
+                            .addOnSuccessListener(aVoid -> Snackbar.make(recyclerView, "Postagem atualizada com sucesso!", Snackbar.LENGTH_SHORT).show())
+                            .addOnFailureListener(e -> Toast.makeText(TimeLineActivity.this, "Erro ao atualizar.", Toast.LENGTH_SHORT).show());
+                }
+            } else {
+                Toast.makeText(this, "Os campos não podem estar vazios.", Toast.LENGTH_SHORT).show();
             }
         });
-        builder.setNegativeButton("Cancelar", null);
+
+        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
         builder.show();
     }
 
-    private void excluirPostagem(Postagem postagem) {
+    @Override
+    public void onDeleteClick(Postagem postagem) {
+
         new AlertDialog.Builder(this)
-                .setTitle("Excluir")
-                .setMessage("Deseja apagar esta publicação?")
-                .setPositiveButton("Sim", (dialog, which) -> {
-                    databaseRef.child(postagem.getIdPost()).removeValue()
-                            .addOnSuccessListener(aVoid -> Snackbar.make(rootView, "Removida", Snackbar.LENGTH_SHORT).show());
-                })
-                .setNegativeButton("Não", null)
-                .show();
-    }
+                .setTitle("Excluir Postagem")
+                .setMessage("Tem certeza que deseja excluir esta postagem permanentemente?")
+                .setPositiveButton("Sim, Excluir", (dialog, which) -> {
+                    if (postagem.getId() != null) {
 
-
-    private void carregarImagemNativamente(String urlImagem, ImageView imageView) {
-        imageView.setTag(urlImagem);
-        imageView.setImageBitmap(null);
-
-        executor.execute(() -> {
-            try {
-                URL url = new URL(urlImagem);
-                HttpURLConnection conexao = (HttpURLConnection) url.openConnection();
-                conexao.setDoInput(true);
-                conexao.connect();
-
-                InputStream input = conexao.getInputStream();
-                Bitmap bitmapDecodificado = BitmapFactory.decodeStream(input);
-
-                mainHandler.post(() -> {
-                    if (imageView.getTag() != null && imageView.getTag().equals(urlImagem)) {
-                        imageView.setImageBitmap(bitmapDecodificado);
+                        databaseReference.child(postagem.getId()).removeValue()
+                                .addOnSuccessListener(aVoid -> Snackbar.make(recyclerView, "Postagem excluída!", Snackbar.LENGTH_LONG).show())
+                                .addOnFailureListener(e -> Toast.makeText(TimeLineActivity.this, "Erro ao excluir.", Toast.LENGTH_SHORT).show());
                     }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 }

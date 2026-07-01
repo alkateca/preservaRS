@@ -1,5 +1,6 @@
 package com.alkateca.preservars;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -120,6 +121,9 @@ public class NewPostActivity extends AppCompatActivity {
                     Log.e("UPLOAD", "Erro no Storage", e);
                     Snackbar.make(rootView, "Erro ao enviar a imagem", Snackbar.LENGTH_SHORT).show();
                 });
+
+        Intent intent = new Intent(NewPostActivity.this, TimeLineActivity.class);
+        startActivity(intent);
     }
 
     private void salvarDadosNoDatabase(String titulo, String descricao, String urlImagem, String uidUsuario) {

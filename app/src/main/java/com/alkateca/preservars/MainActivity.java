@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            NewPostRedirect();
+            MainPageRedirect();
         }
     }
 
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                         Snackbar.make(rootView, "Login realizado com sucesso", Snackbar.LENGTH_SHORT).show();
 
                         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                            NewPostRedirect();
+                            MainPageRedirect();
                         }, 1500);
 
                     } else {
@@ -109,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void NewPostRedirect(){
-        Intent intent = new Intent(MainActivity.this, NewPostActivity.class);
+    private void MainPageRedirect(){
+        Intent intent = new Intent(MainActivity.this, TimeLineActivity.class);
         startActivity(intent);
     }
 

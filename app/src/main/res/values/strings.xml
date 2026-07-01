@@ -1,8 +1,23 @@
 <resources>
-    <string name="app_name">PreservaRS</string>
-    <string name="loginEmail">E-mail</string>
     <string name="loginSenha">Senha</string>
+    <string name="loginEmail">E-mail</string>
     <string name="loginBtnLogin">Login</string>
-    <string name="loginBtnCadastro">Cadastre-se</string>
-    <string name="cadastrBtnCadastro">Cadastrar usuário</string>
+    <string name="loginBtnCadastro">Cadastro</string>
+    <string name="cadastroEmail">Email</string>
+    <string name="cadastroSenha">Senha</string>
+    <string name="cadastroBtnCadastro">Cadastras novo usuário</string>
+    <string name="newPostTitulo">Título da postagem</string>
+    <string name="newPostDescricao">Escreva a descrição aqui...</string>
+    <string name="newPostBtnFoto">Tirar foto da Câmera</string>
+    <string name="newPostBtnPostagem">Publicar Postagem</string>
+    <string name="timeLineSV">Pesquisar</string>
+    <string name="sobreAutor">José Mendes Chesini</string>
+    <string name="sobreCurso">SSI</string>
+    <string name="sobreObjetivo">preservaRS: App para publicação de fotos e descrições de plantas</string>
+    <string name="itemPostagemTitulo">Titulo da postagem</string>
+    <string name="itemPostagemDescricao">Descrição detalhada aqui...</string>
+    <string name="menu_sobre">Sobre</string>
+    <string name="menu_postagens">Publicações</string>
+    <string name="menu_nova_publicacao">Nova Publicação</string>
+    <string name="menu_deslogar">Logout</string>
 </resources>
